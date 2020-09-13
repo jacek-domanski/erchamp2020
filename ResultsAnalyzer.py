@@ -1,5 +1,7 @@
 from collections import Counter
-from math import floor
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-darkgrid')
+
 
 
 class ResultsAnalyzer:
@@ -8,23 +10,20 @@ class ResultsAnalyzer:
         self.ranges_count = Counter()
 
     def open_file(self):
-        with open('short_data.txt', 'r') as file:
+        with open('full_data.txt', 'r') as file:
             i = 0
             for line in file:
                 if i == 0:
                     new_data = dict()
                     new_data['place'] = int(line)
 
-                if i == 1:
+                elif i == 1:
                     new_data['name'] = line.strip()
 
-                if i == 2:
+                elif i == 2:
                     new_data['country'] = line.strip()
 
-                if i == 3:
-                    pass
-
-                if i == 4:
+                elif i == 4:
                     new_data['minutes'] = self.time_to_minutes(line)
                     self.data.append(new_data)
 
@@ -41,11 +40,23 @@ class ResultsAnalyzer:
             range = (result['minutes'] // 10) * 10
             self.ranges_count[range] += 1
 
+    def plot_data(self):
+        fig = plt.figure()
+        ax = fig.add_axes([0.12, 0.1, 0.84, 0.8])
+
+        ax.bar(self.ranges_count.keys(), self.ranges_count.values())
+
+        ax.set_xlabel('Czas [min]')
+        ax.set_ylabel('Liczba grup')
+        ax.set_title('Wyniki w grupach po 10 min')
+        plt.show()
+
     def run(self):
         self.open_file()
         self.count_ranges()
+        print(list(self.ranges_count.keys())[0])
+        self.plot_data()
 
-        print(self.ranges_count)
 
 
 if __name__ == '__main__':
